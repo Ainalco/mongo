@@ -52,3 +52,6 @@ example: db.products.updateOne({id:"1"},{$set:{price:32}})
 Delete Document
 delete data syntax: `db.collectionName.deleteOne(selection)
 db.users.deleteOne({name:"Ainal"})
+ 
+
+that's it
