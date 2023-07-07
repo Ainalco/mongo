@@ -1,0 +1,54 @@
+Basic command database
+
+show databases: show dbs
+create / switch to a Database: use databaseName example: use productsDB
+check the Database you are in : db + enter
+drop database : db.dropDatabase()
+collections
+
+show collections: show collections
+create collection : db.createCollection(name, option) example db.createCollection("products")
+drop collection : db.collectionName.drop()
+
+insert documents command
+
+db.collectionName.instertOne({})
+db.collectionName.instertMany([{},{}])
+db.collectionName.instert([{},{}])
+
+// insertOne()
+ db.products.insertOne({
+    title: "Fjallraven - Foldsack No. 1 Backpack, Fits 15 Laptops",
+    price: 109.95,
+   })
+
+// insertMany()
+ db.products.insertMany([
+  {
+    title: "Fjallraven - Foldsack No. 1 Backpack, Fits 15 Laptops",
+    price: 109.95,
+   },
+   {
+    title: "Mens Casual Premium Slim Fit T-Shirts ",
+    price: 22.3,
+   },
+   {
+    title: "Mens Cotton Jacket",
+    price: 55.99,
+   }
+   ])
+
+show collction read
+db.collectionName.find()
+read data in an easy way syntax: db.collectionName.find().pretty()
+db.products.find(ObjectId("633d183e09743587af26fb07"))
+db.students.find({name: "x"}, {name:0})
+
+Update Document
+
+db.collectionName.update(selection_item, update_data)
+example: db.products.updateOne({id:"1"},{$set:{price:32}})
+
+Delete Document
+delete data syntax: `db.collectionName.deleteOne(selection)
+db.users.deleteOne({name:"Ainal"})
