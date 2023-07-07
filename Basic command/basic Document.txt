@@ -54,4 +54,4 @@ delete data syntax: `db.collectionName.deleteOne(selection)
 db.users.deleteOne({name:"Ainal"})
  
 
-that's it
+that's it....
