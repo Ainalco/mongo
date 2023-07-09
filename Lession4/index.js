@@ -104,6 +104,26 @@ app.get('/', (req, res) => {
       res.status(400).send({message:error.message});
     }
   }); 
+  // use Comparision Operation
+  // lt= lessThan,lte=lessthan and equal,gt=greterthan,gte=greterthan and equal,eq=equal,in=match vanlue in array,ne=not equal,nin=not in array
+  app.get('/allproducts', async (req, res) => {
+    try {
+      const price=req.query.price;
+      let products;
+      if(price){
+       products=await Product.find({price:{$gt:price}});
+      }else{
+        products=await Product.find();
+      } 
+      //const products=await Product.find({price:{$nin:[200000,15000,17000,50000]}});
+      if(products){
+        res.status(200).send(products);
+        
+      }
+    } catch (error) {
+      res.status(400).send({message:error.message});
+    }
+  }); 
 app.listen(PORT, async ()=>{
     console.log(`Server is running at http://localhost:${PORT}`);
     await connectionDB();
