@@ -152,6 +152,89 @@ app.get('/', (req, res) => {
       res.status(400).send({message:error.message});
     }
   }); 
+  // Count result with logcal operator
+  app.get('/allproductsbycount', async (req, res) => {
+    try {
+      const price=req.query.price;
+      const rating=req.query.rating;
+      let products;
+      if(price){
+        products=await Product.find({
+        $or:[{price:{$gte:price}},{rating:{$gt:
+          rating}}],
+        }).countDocuments();
+      }else{
+        products=await Product.find().countDocuments();
+      } 
+      if(products){
+        res.status(200).send({
+          succss:true,
+          message:"Return All Data",
+          data:products});
+        
+      }
+    } catch (error) {
+      res.status(400).send({
+        succss:false,
+        message:error.message});
+    }
+  }); 
+// sorting result with logcal operator
+// 1=ASCENDING,-1=Decending
+app.get('/allproductsbysort', async (req, res) => {
+  try {
+    const price=req.query.price;
+    const rating=req.query.rating;
+    let products;
+    if(price){
+      products=await Product.find({
+      $or:[{price:{$gte:price}},{rating:{$gt:
+        rating}}],
+      }).sort({price:-1});
+    }else{
+      products=await Product.find().sort({price:1});
+    } 
+    if(products){
+      res.status(200).send({
+        succss:true,
+        message:"Return All Data",
+        data:products});
+      
+    }
+  } catch (error) {
+    res.status(400).send({
+      succss:false,
+      message:error.message});
+  }
+});
+// sorting result with logcal operator and select specific fields
+// 1=ASCENDING,-1=Decending
+app.get('/allproductsbysortandselect', async (req, res) => {
+  try {
+    const price=req.query.price;
+    const rating=req.query.rating;
+    let products;
+    if(price){
+      products=await Product.find({
+      $or:[{price:{$gte:price}},{rating:{$gt:
+        rating}}],
+      }).sort({price:-1}).select({title:1,_id:0});
+    }else{
+      products=await Product.find().sort({price:1}).select({title:1,_id:0});
+    } 
+    if(products){
+      res.status(200).send({
+        succss:true,
+        message:"Return All Data",
+        data:products});
+      
+    }
+  } catch (error) {
+    res.status(400).send({
+      succss:false,
+      message:error.message});
+  }
+});
 app.listen(PORT, async ()=>{
     console.log(`Server is running at http://localhost:${PORT}`);
     await connectionDB();
