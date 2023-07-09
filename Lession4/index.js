@@ -16,6 +16,10 @@ const productSchema = new mongoose.Schema({
     type: Number,
     reuire: true,
   },
+  rating: {
+    type: Number,
+    reuire: true,
+  },
   description: {
     type: String,
     reuire: true,
@@ -51,11 +55,13 @@ app.get('/', (req, res) => {
     try {     
       const title=req.body.title;
       const price=req.body.price;
+      const rating=req.body.rating;
       const description= req.body.description;
 
       const newProduct= new Product({
         title:title,
         price:price,
+        rating:rating,
         description:description
       });
       const productdata= await newProduct.save();
@@ -112,6 +118,28 @@ app.get('/', (req, res) => {
       let products;
       if(price){
        products=await Product.find({price:{$gt:price}});
+      }else{
+        products=await Product.find();
+      } 
+      //const products=await Product.find({price:{$nin:[200000,15000,17000,50000]}});
+      if(products){
+        res.status(200).send(products);
+        
+      }
+    } catch (error) {
+      res.status(400).send({message:error.message});
+    }
+  }); 
+  // Logical Operator Operation
+  //and ={$and:[{price:{$lt:price},{title:{$eq:"iphone 5"}}}]}
+   //or ={$or:[{price:{$lt:price},{title:{$eq:"iphone 5"}}}]}
+  app.get('/allproductsby', async (req, res) => {
+    try {
+      const price=req.query.price;
+      let products;
+      if(price){
+        console.log(price);
+       products=await Product.find({$and:[{price:{$gte:price}},{rating:{$gt:4}}],});
       }else{
         products=await Product.find();
       } 
