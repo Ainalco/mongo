@@ -16,6 +16,10 @@ const productSchema = new mongoose.Schema({
     type: Number,
     reuire: true,
   },
+  rating: {
+    type: Number,
+    reuire: true,
+  },
   description: {
     type: String,
     reuire: true,
@@ -51,12 +55,14 @@ app.get('/', (req, res) => {
     try {
       // const title=req.body.title;
       // const price=req.body.price;
+      // const rating=req.body.rating;
       // const description= req.body.description;
 
       //save single data to database store
       // const newProduct= new Product({
       //   title:title,
       //   price:price,
+      //   rating:rating,
       //   description:description
       // });
       // const productdata= await newProduct.save();
@@ -67,11 +73,13 @@ app.get('/', (req, res) => {
         {
           title: "iphone 5",
           price :15000,
+          rating: 4,
           description:"Test iphone"
         },
         {
           title: "iphone 6",
           price :17000,
+          rating:5,
           description:"Test iphone 5"
         }
 

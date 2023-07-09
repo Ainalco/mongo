@@ -14,6 +14,10 @@ const productSchema = new mongoose.Schema({
       type: Number,
       reuire: true,
     },
+    rating: {
+      type: Number,
+      reuire: true,
+    },
     description: {
       type: String,
       reuire: true,
