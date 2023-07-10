@@ -5,7 +5,7 @@ const PORT=3000;
 
 app.use(express.urlencoded({extended:true}));
 app.use(express.json());
-//create schema for product and builting validation
+//create schema for product and Custom validation
 const productSchema = new mongoose.Schema({
   
   title:{
@@ -15,13 +15,13 @@ const productSchema = new mongoose.Schema({
     maxlength: [50,"Maximum Length 50"],
     //lowercase: true, //anoher uppercase
     trim: true, //remove unnecessary space
-    //enum: ["iphone","Samsung"] //accept any one value on title without message
-   //below with message
-    enum:{
-      values: ["Iphone 10", "Samsung"],
-      message: "{VALUE} is not Supported" 
-    },
-    //unique:true
+    //custome validator
+    validate:{
+      validator: function(v) {
+        return v.length==10
+      },
+      message: (props)=>`${props.value} is not a valid`
+    }
   },
   price: {
     type: Number,
@@ -62,7 +62,7 @@ const connectionDB= async ()=>{
 app.get('/', (req, res) => {
     res.send('testing the server');
   });
-  // create and builting validation
+  // create and Custom validation
   app.post('/products', async (req, res) => {
 
     try {     
