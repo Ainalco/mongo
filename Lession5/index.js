@@ -50,28 +50,28 @@ app.get('/', (req, res) => {
     res.send('testing the server');
   });
 
-    app.post('/products', async (req, res) => {
+  app.post('/products', async (req, res) => {
 
-      try {     
-        const title=req.body.title;
-        const price=req.body.price;
-        const rating=req.body.rating;
-        const description= req.body.description;
+    try {     
+      const title=req.body.title;
+      const price=req.body.price;
+      const rating=req.body.rating;
+      const description= req.body.description;
 
-        const newProduct= new Product({
-          title:title,
-          price:price,
-          rating:rating,
-          description:description
-        });
-        const productdata= await newProduct.save();
-        res.status(201).send(productdata);
-        
-      } catch (error) {
-        res.status(500).send({message:error.message});
-      }
+      const newProduct= new Product({
+        title:title,
+        price:price,
+        rating:rating,
+        description:description
+      });
+      const productdata= await newProduct.save();
+      res.status(201).send(productdata);
       
-    });
+    } catch (error) {
+      res.status(500).send({message:error.message});
+    }
+    
+  });
   // use Limit
   app.get('/products', async (req, res) => {
     try {
@@ -235,7 +235,67 @@ app.get('/allproductsbysortandselect', async (req, res) => {
       message:error.message});
   }
 });
+//Delete
+app.delete('/products/:id', async (req, res) => {
 
+  try {     
+    const id=req.params.id;
+    //Delete single item
+    //const productdata= await Product.deleteOne({_id:id});
+    //Delete and show deleted item information
+    const productdata= await Product.findByIdAndDelete({_id:id});
+    res.status(200).send({
+      succss:true,
+      message:"Return All Data",
+      data: productdata,
+    });
+    
+  } catch (error) {
+    res.status(404).send({
+      succss:false,
+      message:error.message
+    });
+  }
+  
+});
+// Update 
+app.put('/products/:id', async (req, res) => {
+  try {
+    const id= req.params.id;
+    const title= req.body.title;
+    const description= req.body.description;
+    const rating= req.body.rating;
+
+    //find single item with tem information
+    const products=await Product.findByIdAndUpdate(
+      {_id: id},
+      {
+      $set:{
+        title:title,
+        description:description,
+        rating:rating,
+      }      
+    },
+    //show updated filed value
+    {new: true}
+    );
+    if(products){
+      //single array
+      //res.status(200).send(products); 
+      //array object  
+      res.status(200).send({
+        success:true,
+        message: "Updated Single Product",
+        data:products
+      });      
+    }
+  } catch (error) {
+    res.status(400).send({
+      success:false,
+      message:error.message
+    });
+  }
+}); 
 app.listen(PORT, async ()=>{
     console.log(`Server is running at http://localhost:${PORT}`);
     await connectionDB();
