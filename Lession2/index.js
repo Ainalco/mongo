@@ -8,19 +8,19 @@ const productSchema = new mongoose.Schema({
   
     title:{
       type: String,
-      reuire: true,
+      required: true,
     },
     price: {
       type: Number,
-      reuire: true,
+      required: true,
     },
     rating: {
       type: Number,
-      reuire: true,
+      required: true,
     },
     description: {
       type: String,
-      reuire: true,
+      required: true,
     },
     createdAt: {
       type: Date,
