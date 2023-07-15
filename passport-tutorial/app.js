@@ -1,7 +1,10 @@
 const express= require('express');
 const cors=require("cors");
 const ejs=require("ejs");
+const User = require('./models/user.models');
 const app= express();
+require("./config/database");
+require("./models/user.models")
 
 app.set("view engine","ejs");
 app.use (cors());
@@ -19,9 +22,16 @@ app.get("/register",(req,res)=>{
 });
 
 //Register :post
-app.post("/register",(req,res)=>{
+app.post("/register", async (req,res)=>{
     try {
-        res.status(201).send("User is created");
+        const user= await User.findOne({username: req.body.username});
+        if(user){
+            return res.status(201).send("User is Already Exist");
+        }else{
+            const newUser=User(req.body);
+            await newUser.save();
+            res.status(201).redirect("/login");
+        }
     } catch (error) {
         res.status(500).send(error.message);
     }
