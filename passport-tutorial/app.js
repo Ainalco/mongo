@@ -3,14 +3,34 @@ const cors=require("cors");
 const ejs=require("ejs");
 const User = require('./models/user.models');
 const app= express();
+require("./config/database");
+require("dotenv").config();
+require("./models/user.models");
+
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
-require("./config/database");
-require("./models/user.models");
+const passport =require("passport");
+const session =require("express-session");
+const MongoStore = require('connect-mongo');
+
+
+
 app.set("view engine","ejs");
 app.use (cors());
 app.use(express.urlencoded({extended:true}));
 app.use(express.json());
+
+app.set('trust proxy', 1) // trust first proxy
+app.use(session({
+  secret: 'keyboard cat',
+  resave: false,
+  saveUninitialized: true,
+  store: MongoStore.create({
+        mongoUrl:process.env.MONGO_URL,
+        collectionName:"sessions",
+  })
+  //cookie: { secure: true }
+}))
 
 //Base Url
 app.get("/",(req,res)=>{
@@ -29,7 +49,8 @@ app.post("/register", async (req,res)=>{
         if(user){
             return res.status(201).send("User is Already Exist");
         }else{
-            bcrypt.hash(req.body.password, saltRounds, async function(err, hash) {
+            bcrypt.hash(req.body.password, saltRounds, async (err, hash) =>
+            {
                 const newUser = new User({
                     username: req.body.username,
                   password:hash,
