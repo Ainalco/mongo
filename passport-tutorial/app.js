@@ -28,9 +28,13 @@ app.use(session({
   store: MongoStore.create({
         mongoUrl:process.env.MONGO_URL,
         collectionName:"sessions",
-  })
+  }),
   //cookie: { secure: true }
-}))
+})
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 //Base Url
 app.get("/",(req,res)=>{
