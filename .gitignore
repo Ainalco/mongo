@@ -11,3 +11,5 @@ Lession9/node_modules
 Lession9/.env
 passport-tutorial/node_modules
 passport-tutorial/.env
+passport-google-auth/node_modules
+passport-google-auth/.env
