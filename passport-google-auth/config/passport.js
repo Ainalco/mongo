@@ -1,23 +1,49 @@
-const User = require("../models/user.models");
+require("dotenv").config();
+const User = require("../models/user.model");
 const passport = require("passport");
 const bcrypt = require("bcrypt");
-const LocalStrategy = require("passport-local").Strategy;
+
+const GoogleStrategy = require("passport-google-oauth20").Strategy;
 
 passport.use(
-  new LocalStrategy(async (username, password, done) => {
-    try {
-      const user = await User.findOne({ username: username });
+  new GoogleStrategy(
+    {
+      clientID: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      callbackURL: "http://localhost:5000/auth/google/callback",
+    },
+    async (accessToken, refreshToken, profile, cb) =>{
+      console.log("user profile is: ", profile);
+      const user=await User.findOne({googleId: profile.id});
       if (!user) {
-        return done(null, false, { message: "Incorrect Username" });
-      }
-      if (!bcrypt.compare(password, user.password)) {
-        return done(null, false, { message: "Incorrect password" });
-      }
-      return done(null, user);
-    } catch (error) {
-      return done(err);
+            let newUser = new User({
+              googleId: profile.id,
+              username: profile.displayName,
+            });
+            newUser.save();
+            return cb(null, newUser);
+          } else {
+            // if we find an user just return return user
+            return cb(null, user);
+          }
+      // User.findOne({ googleId: profile.id }, (err, user) => {
+      //   if (err) return cb(err, null);
+
+      //   // not a user; so create a new user with new google id
+      //   if (!user) {
+      //     let newUser = new User({
+      //       googleId: profile.id,
+      //       username: profile.displayName,
+      //     });
+      //     newUser.save();
+      //     return cb(null, newUser);
+      //   } else {
+      //     // if we find an user just return return user
+      //     return cb(null, user);
+      //   }
+      // });
     }
-  })
+  )
 );
 
 // create session id
