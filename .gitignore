@@ -13,3 +13,6 @@ passport-tutorial/node_modules
 passport-tutorial/.env
 passport-google-auth/node_modules
 passport-google-auth/.env
+
+jwt-authentication/server/node_modules
+jwt-authentication/server/.env
