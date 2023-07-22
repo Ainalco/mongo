@@ -5,7 +5,7 @@ const app = express();
 require("./config/database");
 require("dotenv").config();
 require("./config/passport");
-const User = require("./models/user.models");
+const User = require("./models/user.model");
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
 
@@ -40,30 +40,6 @@ app.get("/", (req, res) => {
   res.render("index");
 });
 
-// register : get
-app.get("/register", (req, res) => {
-  res.render("register");
-});
-
-// register : post
-app.post("/register", async (req, res) => {
-  try {
-    const user = await User.findOne({ username: req.body.username });
-    if (user) return res.status(400).send("user already exists");
-
-    bcrypt.hash(req.body.password, saltRounds, async (err, hash) => {
-      const newUser = new User({
-        username: req.body.username,
-        password: hash,
-      });
-      await newUser.save();
-      res.redirect("/login");
-    });
-  } catch (error) {
-    res.status(500).send(error.message);
-  }
-});
-
 const checkLoggedIn = (req, res, next) => {
   if (req.isAuthenticated()) {
     return res.redirect("/profile");
@@ -76,13 +52,21 @@ app.get("/login", checkLoggedIn, (req, res) => {
   res.render("login");
 });
 
-// login : post
-app.post(
-  "/login",
-  passport.authenticate("local", {
+app.get(
+  "/auth/google",
+  passport.authenticate("google", { scope: ["profile"] })
+);
+
+app.get(
+  "/auth/google/callback",
+  passport.authenticate("google", {
     failureRedirect: "/login",
     successRedirect: "/profile",
-  })
+  }),
+  function (req, res) {
+    // Successful authentication, redirect home.
+    res.redirect("/");
+  }
 );
 
 const checkAuthenticated = (req, res, next) => {
@@ -94,7 +78,7 @@ const checkAuthenticated = (req, res, next) => {
 
 // profile protected route
 app.get("/profile", checkAuthenticated, (req, res) => {
-  res.render("profile");
+  res.render("profile", { username: req.user.username });
 });
 
 // logout route
